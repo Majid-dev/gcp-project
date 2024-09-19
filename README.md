@@ -15,15 +15,15 @@ This project involves setting up a GCP virtual machine and performing several ta
 ## Infrastructure Details
 
 ### 1. Linux Instance Creation
-- **Instance Type:** f1-micro
+- **Instance Type:** e2-medium (f1-micro does'nt have enough resource to run services and command of intrest)
 - **OS:** CentOS 7
-- **Zone:** europe-north1-c (There are no resource in europe-west3-a)
+- **Zone:** europe-north1-c (There are no resource available in europe-west3-a)
 - **Public IP:** Dynamic public IP assigned by GCP is `34.88.120.243`
 - **Private IP:** Dynamic private IP assigned in the default network is `10.11.0.5`.
 - **Startup Script:** The instance is initialized with a startup script to update system packages and install HTTP services.
 - **Firewall Tag:** 
   - Tag: `allow-access`
-  - Rules: Allow access to HTTP (80) HTTPS (443) and SSH (2233) ports.
+  - Rules: Allow access to HTTP (80) (port 80 is needed for renew ssl certificate) HTTPS (443) and SSH (2233) ports.
   - The firewall tag is attached to the instance for public access.
 
 ### 2. SSH Key Setup
@@ -38,7 +38,7 @@ This project involves setting up a GCP virtual machine and performing several ta
 
 ### 4. Ansible Automation
 - **Ansible Inventory:** The inventory file includes the virtual machine’s public IP and name.
-- **Ansible Role:** A role is created to deploy a simple web page containing your name and any additional information.
+- **Ansible Role:** A role is created to deploy a simple web page containing your name and some other information.
 - **Tasks:**
   - Template an HTML file.
   - Upload the HTML file to the VM.
@@ -57,6 +57,6 @@ This project involves setting up a GCP virtual machine and performing several ta
   - Generated using Let's Encrypt.
   - Configured HTTP to use the SSL certificate for secure connections.
   
-### 7. Terraform and Ansible Repositories
-- Since Google Cloud Source Repository no longer available for new users I pushed project codes to Azure DevOps Repository https://dev.azure.com/moslehkormaji/assignment-gcp.
+### 7. Repositories
+- Since Google Cloud Source Repository no longer available for new users I pushed project codes to this Azure DevOps Repository https://dev.azure.com/moslehkormaji/assignment-gcp.
 
