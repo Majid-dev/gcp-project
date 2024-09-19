@@ -52,7 +52,7 @@ This project involves setting up a GCP virtual machine and performing several ta
   - HTTP and MySQL logs are rotated daily and configured to keep logs for up to 7 days.
 
 ### 6. Domain and SSL Configuration
-- **Domain Name:** A free domain is created using [Duckdns](https://www.duckdns.org/) with the `duckdns.org` domain. https://majid-gcp.duckdns.org
+- **Domain Name:** A free domain is created using [Duckdns] (no-ip.com just provide one free domain which I have used it for azure project)(https://www.duckdns.org/) with the `duckdns.org` domain. https://majid-gcp.duckdns.org
 - **SSL Certificate:**
   - Generated using Let's Encrypt.
   - Configured HTTP to use the SSL certificate for secure connections.
