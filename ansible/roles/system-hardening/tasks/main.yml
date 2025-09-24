@@ -1,0 +1,84 @@
+---
+- name: 1. System Updates
+  yum:
+    name: "*"
+    state: latest
+
+- name: 2. Enforce strong password policies (login.defs)
+  lineinfile:
+    path: /etc/login.defs
+    regexp: '^(PASS_MAX_DAYS|PASS_MIN_DAYS|PASS_WARN_AGE)'
+    line: '{{ item }}'
+  loop:
+    - 'PASS_MAX_DAYS   90'
+    - 'PASS_MIN_DAYS   14'
+    - 'PASS_WARN_AGE   7'
+
+- name: 3. Enforce strong password policies (pwquality.conf)
+  lineinfile:
+    path: /etc/security/pwquality.conf
+    regexp: '^(dcredit|ucredit|ocredit|lcredit|minlen)'
+    line: '{{ item }}'
+  loop:
+    - 'dcredit = -1'
+    - 'ucredit = -1'
+    - 'ocredit = -1'
+    - 'lcredit = -1'
+    - 'minlen = 10'
+
+- name: 3. Change default SSH port and disable password auth/root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^{{ item.regexp }}'
+    line: '{{ item.line }}'
+  loop:
+    - { regexp: 'Port', line: 'Port 2233' }
+    - { regexp: 'PasswordAuthentication', line: 'PasswordAuthentication no' }
+    - { regexp: 'PermitRootLogin', line: 'PermitRootLogin no' }
+  notify: Restart sshd
+
+- name: 4. Firewall Configuration (Firewalld)
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  loop:
+    - 80/tcp  # HTTP
+    - 443/tcp # HTTPS
+    - 2233/tcp # SSH
+
+- name: 5. Configure dnf-automatic for security updates
+  block:
+    - name: Install dnf-automatic
+      yum:
+        name: dnf-automatic
+        state: present
+    - name: Configure dnf-automatic to apply security updates
+      copy:
+        content: |
+          [commands]
+          apply_updates = yes
+          [emitters]
+          emit_to = stdout
+          [base]
+          debuglevel = 1
+        dest: /etc/dnf/automatic.conf
+        mode: '0644'
+    - name: Enable and start dnf-automatic
+      service:
+        name: dnf-automatic.timer
+        enabled: yes
+        state: started
+
+- name: 6. Install AIDE for file integrity monitoring
+  block:
+    - name: Install aide package
+      yum:
+        name: aide
+        state: present
+    - name: Initialize AIDE database
+      command: aide --init
+      args:
+        creates: /var/lib/aide/aide.db.new.gz
+    - name: Copy new database to production location
+      command: mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
