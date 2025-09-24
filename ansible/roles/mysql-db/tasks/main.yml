@@ -1,0 +1,22 @@
+---
+- name: Install MariaDB (MySQL) server
+  yum:
+    name: mariadb-server
+    state: present
+- name: Enable and start mariadb
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+- name: Create daily MySQL backup cron job
+  cron:
+    name: "mysql backup"
+    minute: "59"
+    hour: "23"
+    job: "mysqldump -u root exam > /opt/backups/exam_$(date +\%Y-\%m-\%d).sql"
+- name: Create daily log rotation cron job
+  cron:
+    name: "log rotate"
+    minute: "0"
+    hour: "0"
+    job: "logrotate /etc/logrotate.conf"
