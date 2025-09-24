@@ -1,0 +1,10 @@
+---
+- name: Automate GCP VM Configuration
+  hosts: web
+  become: yes
+  roles:
+    - role: system-hardening
+    - role: http-server
+    - role: mysql-db
+    - role: cert-manager
+    - role: web-app
