@@ -1,9 +1,0 @@
----
-- name: Upload index.html template to web server
-  template:
-    src: index.html.j2
-    dest: /var/www/html/index.html
-    mode: 0644
-
-  notify: Restart httpd service
-
