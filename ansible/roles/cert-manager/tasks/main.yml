@@ -1,0 +1,13 @@
+---
+- name: Install EPEL repository
+  yum:
+    name: epel-release
+    state: present
+- name: Install certbot
+  yum:
+    name: certbot
+    state: present
+- name: Generate SSL certificate
+  command: certbot certonly --non-interactive --agree-tos --email <your-email> --standalone -d <your-domain>
+  args:
+    creates: /etc/letsencrypt/live/<your-domain>/fullchain.pem
