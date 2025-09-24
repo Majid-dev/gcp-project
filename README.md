@@ -1,4 +1,4 @@
-# GCP Infrastructure and Application Deployment
+![gcp-project Icone](gcp-project-banner.png)
 
 <hr>
 
